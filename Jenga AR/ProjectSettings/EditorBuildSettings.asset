@@ -5,10 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Menu.unity
+    path: Assets/JengaArProofed/Scenes/Menu.unity
     guid: 7261dce4575cd0e428ebf575f75c1409
   - enabled: 1
-    path: Assets/Scenes/SinglePlayScene.unity
+    path: Assets/JengaArProofed/Scenes/SinglePlayScene.unity
     guid: 4cd3e34aad15d86449c001d2b1aa31ee
   m_configObjects: {}

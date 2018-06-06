@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
-  <Tracking>
-    <ImageTarget name="FingerTarget" size="5.000000 5.000000" />
-    <ImageTarget name="GroundPlanImg" size="0.200000 0.200000" />
-    <ImageTarget name="picAss" size="5.500000 8.505155" />
-  </Tracking>
-</QCARConfig>

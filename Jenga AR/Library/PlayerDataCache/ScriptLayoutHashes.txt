@@ -1,9 +1,9 @@
 Android
 PlayerPath?
-C:/Users/Miles/Workspace/Projekte/UnityProjekte/Jenga AR/testnow.apk
+C:/Users/Miles/Workspace/AR/JengaGit/JengaAR/Jenga AR/test3.apk
 SceneListBegin?
-Assets/Scenes/Menu.unity
-Assets/Scenes/SinglePlayScene.unity
+Assets/JengaArProofed/Scenes/Menu.unity
+Assets/JengaArProofed/Scenes/SinglePlayScene.unity
 SceneListEnd?
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 cf455f7a806648c6ed4c7d3e3f8a0e03 UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
@@ -19,7 +19,9 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 607d64d2c4bc76ac9876e6f7b9cc7edf UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:GoogleARCore.CrossPlatform.XPAnchor
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:GoogleARCore.Anchor
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Menu
 be3eb50ea17441d681601ae101e51062 Assembly-CSharp.dll:.Tower
+4ece81221cf7c6bc948926698a9d4005 Assembly-CSharp.dll:.SinglePlayController
 02f43a4f72590a32c46e9c76cd877fe1 Assembly-CSharp.dll:GoogleARCore.Examples.AugmentedImage.AugmentedImageExampleController
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
@@ -226,7 +228,6 @@ e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEng
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 67a5f2c97205d2e41a8ed7c7ce898f6e UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSoundfieldExtension
 67a5f2c97205d2e41a8ed7c7ce898f6e UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSourceExtension
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.DummyScript
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
@@ -303,5 +304,4 @@ a924c90a95cf65003f662aa5e30abb6b Vuforia.UnityExtensions.dll:Vuforia.VuforiaConf
 01e6f145049f3a676df6dc247eabf176 Vuforia.UnityExtensions.dll:Vuforia.VuMarkBehaviour
 3d1b89310e77c34bc0c8d7132231345c Vuforia.UnityExtensions.dll:Vuforia.WireframeBehaviour
 05524b8f659e7bfe5756d1335fec24ba Vuforia.UnityExtensions.dll:Vuforia.WireframeTrackableEventHandler
-a191f3c66c97b22bac9b6ce7f59993bb Assembly-CSharp.dll:.SinglePlayController
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Menu
+2aa73e17576a4e4d3c6190b00ede5e13 Assembly-CSharp.dll:.SideCam
