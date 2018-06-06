@@ -88,8 +88,6 @@ public class CamSimulator : MonoBehaviour {
                     new Vector3(towerCam.position.x, grabbedObject.transform.position.y + 0.2f, towerCam.position.z);
                 grabbedObject = null;
             }
-
-
         }
     }
 
