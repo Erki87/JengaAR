@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 23727881081509210}
   - component: {fileID: 65375480192891846}
   - component: {fileID: 54992021042737182}
+  - component: {fileID: 114961563414475494}
   m_Layer: 0
   m_Name: SmallStone
   m_TagString: Untagged
@@ -112,3 +113,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114961563414475494
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1420287580499412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdb69125ae2faee4682b293d4821eaf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unselected: {fileID: 2100000, guid: e32ac4f2e12a7df46846082b224ac2a4, type: 2}
+  selected: {fileID: 2100000, guid: 93588718fd443ed499e12bc9493bd911, type: 2}

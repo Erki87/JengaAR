@@ -1,23 +1,35 @@
 ﻿using System;
 using System.Collections;
 using GoogleARCore;
-using GoogleARCore.Examples.Common;
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
+
+public enum GameStatus
+{
+    TOWER_NOT_PLACED,
+    NOT_PLAYERS_TURN,
+    WATCHING,
+    MOVE_FIXED,
+    MOVE_RELATIVE,
+    MOVE_GESTURES,
+    PLACING,
+    GAME_OVER_LOOSE,
+    GAME_OVER_WIN,
+}
+
+public enum GestureStyle
+{
+    NO_FINGER,
+    ONE_FINGER,
+    TWO_FINGER
+}
 /// <summary>
 /// Class to control the single-play-mode...
 /// </summary>
-public class SinglePlayController : MonoBehaviour {
+public class SinglePlayController : SceneController {
 
-
-
-    [Header("Cameras")]
-    public Camera FirstPersonCamera;
-    public SideCam sideCam;
 
     [Space(5)]
     [Header("GameObjects")]
@@ -26,285 +38,453 @@ public class SinglePlayController : MonoBehaviour {
     [Space(5)]
     [Header("Prefabs")]
     public GameObject towerPrefab;
-    public GameObject imaginationalStonePrefab;
+    public GameObject ghostStonePrefab;
 
     [Space(5)]
-    [Header("Menu-Items")]
-    public Text debugText;
-    public GameObject gameOverMenu;
-    public GameObject freezeButton;
+    [Header("Menu")]
+    public SinglePlayMenu menu;
+
 
     private GameObject placedTower;
     private Tower tower;
 
-    private GameObject imaginationalStone;
+    private GameObject ghostStone;
     private GameObject grabbedObject;
-    private GameObject lastStone;
 
-    private bool yourTurn = false;
-    private bool freeze = false;
+    private Transform deviceCam;
+
+    private GameStatus status;
+
+    private Vector3 ghostDelta;
 
 
-    /// <summary>
-    /// A gameobject parenting UI for displaying the "searching for planes" snackbar.
-    /// </summary>
-    public GameObject SearchingForPlaneUI;
+    #region LIFECYCLE
 
-    /// <summary>
-    /// A list to hold all planes ARCore is tracking in the current frame. This object is used across
-    /// the application to avoid per-frame allocations.
-    /// </summary>
-    private System.Collections.Generic.List<DetectedPlane> m_AllPlanes = new System.Collections.Generic.List<DetectedPlane>();
-
-    /// <summary>
-    /// True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
-    /// </summary>
-    private bool m_IsQuitting = false;
-
-    public void Start()
+    public override void CustomAwake()
     {
-        placedTower = null;
-        debugText.text = "LetsGo";
+        deviceCam = DeviceController.GetCamTransform();
+        status = GameStatus.GAME_OVER_WIN;
+        UpdateStatus(GameStatus.TOWER_NOT_PLACED);
+    }
+
+    public void Update()
+    {
+        menu.EnablePlacing(IsPlacingAllowed());
+
+        if (IsUIInput()) return;
+
+        switch (status)
+        {
+            case GameStatus.TOWER_NOT_PLACED:
+            case GameStatus.NOT_PLAYERS_TURN:
+            case GameStatus.GAME_OVER_LOOSE:
+            case GameStatus.GAME_OVER_WIN:
+                return;
+            case GameStatus.WATCHING:
+                PerformWatching();
+                break;
+            case GameStatus.PLACING:
+                PerformPlacing();
+                break;
+            case GameStatus.MOVE_FIXED:
+                break;
+            case GameStatus.MOVE_RELATIVE:
+                PerformRelative();
+                break;
+            case GameStatus.MOVE_GESTURES:
+                PerformGestures();
+                break;
+        }
+    }
+
+    public void UpdateStatus(GameStatus newStatus)
+    {
+        if (status == newStatus) return;
+        switch (newStatus)
+        {
+            case GameStatus.TOWER_NOT_PLACED: status = newStatus; StartTowerPlacing(); break;
+            case GameStatus.WATCHING: status = newStatus; StartWatching(); break;
+            case GameStatus.MOVE_FIXED: status = newStatus; StartMovingFixed(); break;
+            case GameStatus.MOVE_RELATIVE: status = newStatus; StartMovingRelative(); break;
+            case GameStatus.MOVE_GESTURES: status = newStatus; StartMovingGestures(); break;
+            case GameStatus.GAME_OVER_LOOSE: status = newStatus; StartGameOver(); break;
+
+            case GameStatus.PLACING: if (IsPlacingAllowed()) PerformPlacing(); else return; break;
+        }
+    }
+
+    public void UpdateStatus(string newStatus)
+    {
+        switch (newStatus)
+        {
+            case "relative": UpdateStatus(GameStatus.MOVE_RELATIVE); break;
+            case "release": UpdateStatus(GameStatus.PLACING); break;
+            case "fixed": UpdateStatus(GameStatus.MOVE_FIXED); break;
+            case "gestures": UpdateStatus(GameStatus.MOVE_GESTURES); break;
+            case "u loose": UpdateStatus(GameStatus.GAME_OVER_LOOSE); break;
+
+        }
+    }
+
+    public override void OnUnLoad()
+    {
+        if (ghostStone != null)
+            Destroy(ghostStone);
+    }
+
+    #endregion
+
+    #region PLACING THE TOWER
+
+    private void StartTowerPlacing()
+    {
+        menu.DisableAll();
         StartCoroutine(PlaceTower());
     }
 
     private System.Collections.IEnumerator PlaceTower()
     {
-        int counter = 0;
-        while (placedTower == null)
+        DeviceController.Service().EnableVisualising(true);
+        while (status == GameStatus.TOWER_NOT_PLACED)
         {
-            counter++;
-            debugText.text = counter.ToString();
-            // Hide snackbar when currently tracking at least one plane.
-            Session.GetTrackables<DetectedPlane>(m_AllPlanes);
-            bool showSearchingUI = true;
-            for (int i = 0; i < m_AllPlanes.Count; i++)
+            bool isTracking = deviceController.IsATrackableFound();
+
+            if (isTracking)
+                menu.ShowTippText("Tap on the plane to place the tower");
+            else
+                menu.ShowTippText("Lets find a surface to place the tower");
+
+            if (Input.GetKeyDown(KeyCode.Return))
             {
-                if (m_AllPlanes[i].TrackingState == TrackingState.Tracking)
-                {
-                    showSearchingUI = false;
-                    break;
-                }
+                placedTower = Instantiate(towerPrefab, transform.position, transform.rotation, ground.transform);
+
             }
-
-            SearchingForPlaneUI.SetActive(showSearchingUI);
-
-            // If the player has not touched the screen, we are done with this update.
             Touch touch;
-            if (Input.touchCount > 0 && (touch = Input.GetTouch(0)).phase == TouchPhase.Began)
+            if (isTracking && Input.touchCount > 0 && (touch = Input.GetTouch(0)).phase == TouchPhase.Ended)
             {
-                // Raycast against the location the player touched to search for planes.
-                TrackableHit hit;
-                TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
-                    TrackableHitFlags.FeaturePointWithSurfaceNormal;
-
-                if (Frame.Raycast(touch.position.x, touch.position.y, raycastFilter, out hit))
+                if (EventSystem.current.currentSelectedGameObject == null)
                 {
-                    // Use hit pose and camera pose to check if hittest is from the
-                    // back of the plane, if it is, no need to create the anchor.
-                    if (!((hit.Trackable is DetectedPlane) &&
-                        Vector3.Dot(FirstPersonCamera.transform.position - hit.Pose.position,
-                            hit.Pose.rotation * Vector3.up) < 0))
+                    try
                     {
-                        placedTower = Instantiate(towerPrefab, hit.Pose.position, hit.Pose.rotation);
+                        Anchor anchor = deviceController.AnchorOnTrackable(touch.position);
+                        placedTower = Instantiate(towerPrefab, anchor.transform.position, anchor.transform.rotation);
                         placedTower.transform.Rotate(0, 180.0f, 0, Space.Self);
-
-                        var anchor = hit.Trackable.CreateAnchor(hit.Pose);
-
                         placedTower.transform.parent = ground.transform;
                         tower = placedTower.GetComponent<Tower>();
-                        yourTurn = true;
-                        debugText.text = "Tower Placed! Tower:" + placedTower.transform.position + " \nCam: " + FirstPersonCamera.transform.position;
-                        //yield return new WaitForSeconds(1);
-                        FindObjectOfType<PointcloudVisualizer>().StopVisualising();
+                        DeviceController.Service().EnableVisualising(false);
+                        UpdateStatus(GameStatus.WATCHING);
+                    }
+                    catch (Exception)
+                    {
+                        menu.ShowTippText("Please Restart, Sorry");
                     }
                 }
             }
             yield return null;
         }
-        sideCam.StartSideCam(placedTower.transform);
+
+
     }
 
-    public void Update()
+    #endregion
+
+    #region WATCHING
+
+    private void StartWatching()
     {
-        _UpdateApplicationLifecycle();
-        if ( yourTurn && (tower != null) ) PerformTurn();
+        menu.DisableAll();
+        menu.ShowTippText("Choose a stone by tapping");
     }
 
-    private void PerformTurn()
-    {
-        if (EventSystem.current.currentSelectedGameObject == null)
-        {
-            if (grabbedObject == null) PerformGrabbing();
-            else
-            {
-                PerformMoving();
-
-                if (!freeze) PerformPlacing();
-            }
-
-        }
-    }
-
-    private void PerformGrabbing()
+    private void PerformWatching()
     {
         Touch touch;
-        if (Input.touchCount > 0 && (touch = Input.GetTouch(0)).phase == TouchPhase.Began)
+        if (Input.touchCount == 1 && (touch = Input.GetTouch(0)).phase == TouchPhase.Began)
         {
-            // Raycast against the location the player touched to search for planes.
             RaycastHit hit;
-            Ray ray = FirstPersonCamera.ScreenPointToRay(touch.position);
-            debugText.text = "touch: " + ray.ToString();
+            Ray ray = DeviceController.GetCam().ScreenPointToRay(touch.position);
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.transform.name.ToLower().Contains("stone"))
                 {
-                    imaginationalStone = Instantiate(imaginationalStonePrefab, hit.transform.position, hit.transform.rotation);
-                    imaginationalStone.transform.parent = FirstPersonCamera.transform;
-                    grabbedObject = hit.transform.gameObject;
-                    grabbedObject.GetComponent<Rigidbody>().useGravity = false;
-                    debugText.text += " hit a stone";
-                }
-                else debugText.text += " hit " + hit.collider.name;
+                    ghostStone = Instantiate(ghostStonePrefab, hit.transform.position, hit.transform.rotation);
 
+                    grabbedObject = hit.transform.gameObject;
+                    grabbedObject.GetComponent<Stone>().ActivateGravity(ghostStone.transform);
+
+
+                    UpdateStatus(GameStatus.MOVE_RELATIVE);
+                }
             }
-            else debugText.text += " hit nothing";
+
         }
     }
 
-    private void PerformMoving()
+    #endregion
+
+    #region MOVE FIXED RELATIVE OR WITH GESTURES
+
+    private void StartMovingFixed()
     {
-        grabbedObject.transform.position =
-               Vector3.Lerp(grabbedObject.transform.position, imaginationalStone.transform.position, 0.3f);
-        grabbedObject.transform.rotation =
-            Quaternion.Lerp(grabbedObject.transform.rotation, imaginationalStone.transform.rotation, 0.3f);
+        ghostStone.transform.parent = deviceCam;
+        menu.activateFixedMove();
+        menu.ShowTippText("The stone will allways stay in front of your device.\n Try to reach the top.");
     }
+
+    private void StartMovingRelative()
+    {
+        ghostStone.transform.parent = ground.transform;
+        ghostDelta = ghostStone.transform.position - deviceCam.position;
+
+        menu.activateRelativeMove();
+        menu.ShowTippText("The stone moves like your device. Try to place it on top");
+    }
+
+    private void StartMovingGestures()
+    {
+        ghostStone.transform.parent = ground.transform;
+        menu.activateGesturesMove();
+    }
+
+    private void PerformRelative()
+    {
+        ghostStone.transform.position = deviceCam.position + ghostDelta;
+    }
+
+    private GestureStyle style = GestureStyle.NO_FINGER;
+
+    private void PerformGestures()
+    {
+        switch (style)
+        {
+            case GestureStyle.NO_FINGER:
+                switch (Input.touchCount)
+                {
+                    case 1: StartOneFingerGesture(); break;
+                    case 2: StartToTwoFingerGesture(); break;
+                    default: menu.ShowTippText("Touch the screen with one or two fingers");break;
+                }
+                break;
+
+            case GestureStyle.ONE_FINGER:
+                switch (Input.touchCount)
+                {
+                    case 0: StopOneFingerGesture(); break;
+                    case 1: PerformOneFingerGesture(); break;
+                    case 2: SwitchToTwoFingerGesture(); break;
+                }
+                break;
+
+            case GestureStyle.TWO_FINGER:
+                switch (Input.touchCount)
+                {
+                    case 0: StopTwoFingerGesture(); break;
+                    case 1: SwitchToOneFingerGesture(); break;
+                    case 2: PerformTwoFingerGesture(); break;
+                }
+                break;
+        }
+    }
+
+    private Vector2 lastPos;
+    private void StartOneFingerGesture()
+    {
+        menu.ShowTippText("Rotate the stone by swiping left or right");
+        Touch touch = Input.GetTouch(0);
+
+        if (touch.phase == TouchPhase.Began)
+        {
+            lastPos = touch.position;
+            style = GestureStyle.ONE_FINGER;
+        }
+    }
+
+    private void PerformOneFingerGesture()
+    {
+        Touch touch = Input.GetTouch(0);
+        if (touch.phase == TouchPhase.Ended)
+        {
+            StopOneFingerGesture();
+        }
+        else if (touch.phase == TouchPhase.Moved)
+        {
+            float deltaX = (touch.position.x - lastPos.x) * 0.2f;
+
+            Vector3 ghostEulers = ghostStone.transform.eulerAngles;
+            ghostStone.transform.eulerAngles = new Vector3(ghostEulers.x, ghostEulers.y + deltaX, ghostEulers.z);
+            lastPos = touch.position;
+        }
+    }
+
+    private void StopOneFingerGesture()
+    {
+        style = GestureStyle.NO_FINGER;
+    }
+
+    private void SwitchToOneFingerGesture()
+    {
+        Touch touch = Input.GetTouch(0);
+
+        if (touch.phase == TouchPhase.Ended)
+            StopOneFingerGesture();
+        else if (touch.phase == TouchPhase.Stationary)
+        {
+            lastPos = touch.position;
+            style = GestureStyle.ONE_FINGER;
+        }
+    }
+
+    private float maxDist;
+    private void StartToTwoFingerGesture()
+    {
+        menu.ShowTippText("Pull the stone by zooming in \nPush the stone by zooming out");
+        Touch touch1 = Input.GetTouch(0);
+        Touch touch2 = Input.GetTouch(1);
+
+        if (!(
+            touch1.phase == TouchPhase.Ended ||
+            touch2.phase == TouchPhase.Ended ||
+            touch1.phase == TouchPhase.Canceled ||
+            touch2.phase == TouchPhase.Canceled
+            ))
+        {
+
+            maxDist = Vector2.Distance(touch1.position, touch2.position) * 2f;
+
+            style = GestureStyle.TWO_FINGER;
+        }
+    }
+
+    private void PerformTwoFingerGesture()
+    {
+        Touch touch1 = Input.GetTouch(0);
+        Touch touch2 = Input.GetTouch(1);
+
+        if (
+            touch1.phase == TouchPhase.Ended ||
+            touch2.phase == TouchPhase.Ended ||
+            touch1.phase == TouchPhase.Canceled ||
+            touch2.phase == TouchPhase.Canceled
+            )
+        {
+            StopTwoFingerGesture();
+        }
+        else if (touch1.phase == TouchPhase.Moved && touch2.phase == TouchPhase.Moved)
+        {
+            float newDist = Vector2.Distance(touch1.position, touch2.position);
+
+            Vector3 ghostPos = ghostStone.transform.position;
+            Vector3 minPos = deviceCam.position +  (ghostPos - deviceCam.position) * 0.1f;
+            Vector3 deltaPos = ghostPos - minPos;
+            Vector3 maxPos = minPos + 2f * deltaPos;
+            Vector3 newPos = ghostPos;
+
+            if (newDist > maxDist) newPos = minPos;
+            else
+            {
+                float learpFactor = newDist / maxDist;
+                newPos = Vector3.Lerp(maxPos, minPos, learpFactor);
+            }
+
+            ghostStone.transform.position = newPos;
+        }
+    }
+
+    private void StopTwoFingerGesture()
+    {
+        style = GestureStyle.NO_FINGER;
+    }
+
+    private void SwitchToTwoFingerGesture()
+    {
+        Touch touch1 = Input.GetTouch(0);
+        Touch touch2 = Input.GetTouch(1);
+
+        if (
+            touch1.phase == TouchPhase.Ended ||
+            touch2.phase == TouchPhase.Ended ||
+            touch1.phase == TouchPhase.Canceled ||
+            touch2.phase == TouchPhase.Canceled
+            )
+        {
+            StopOneFingerGesture();
+        }
+        else if (touch1.phase == TouchPhase.Began || touch2.phase == TouchPhase.Began)
+        {
+            StartToTwoFingerGesture();
+        }
+    }
+
+    #endregion
+
+    #region PLACING
 
     private void PerformPlacing()
     {
-        Touch touch;
-        if (Input.touchCount > 0 && (touch = Input.GetTouch(0)).phase == TouchPhase.Began)
+        if (Globals.TryPlaceHigher(grabbedObject.transform.position.y))
         {
-            grabbedObject.transform.parent = ground.transform;
-            grabbedObject.GetComponent<Rigidbody>().useGravity = true;
+            grabbedObject.GetComponent<Stone>().ActivateGravity(null);
             grabbedObject = null;
-            DestroyImmediate(imaginationalStone);
-            freezeButton.SetActive(false);
+            Destroy(ghostStone);
+            ghostStone = null;
+            UpdateStatus(GameStatus.WATCHING);
         }
     }
 
+    #endregion
 
-    /// <summary>
-    /// Check and update the application lifecycle.
-    /// </summary>
-    private void _UpdateApplicationLifecycle()
+    #region GAME OVER
+
+    public void StartGameOver()
     {
-        // Exit the app when the 'back' button is pressed.
-        if (Input.GetKey(KeyCode.Escape))
+        if (ghostStone != null)
         {
-            Application.Quit();
+            Destroy(ghostStone);
+            ghostStone = null;
         }
-
-        // Only allow the screen to sleep when not tracking.
-        if (Session.Status != SessionStatus.Tracking)
-        {
-            const int lostTrackingSleepTimeout = 15;
-            Screen.sleepTimeout = lostTrackingSleepTimeout;
+        if (grabbedObject != null) {
+            grabbedObject.GetComponent<Stone>().ActivateGravity(null);
+            grabbedObject = null;
         }
-        else
-        {
-            Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        }
-
-        if (m_IsQuitting)
-        {
-            return;
-        }
-
-        // Quit if ARCore was unable to connect and give Unity some time for the toast to appear.
-        if (Session.Status == SessionStatus.ErrorPermissionNotGranted)
-        {
-            _ShowAndroidToastMessage("Camera permission is needed to run this application.");
-            m_IsQuitting = true;
-            Invoke("_DoQuit", 0.5f);
-        }
-        else if (Session.Status.IsError())
-        {
-            _ShowAndroidToastMessage("ARCore encountered a problem connecting.  Please start the app again.");
-            m_IsQuitting = true;
-            Invoke("_DoQuit", 0.5f);
-        }
+        menu.gameOver();
     }
 
-    /// <summary>
-    /// Actually quit the application.
-    /// </summary>
-    private void _DoQuit()
-    {
-        Application.Quit();
-    }
+    #endregion
 
-    /// <summary>
-    /// Show an Android toast message.
-    /// </summary>
-    /// <param name="message">Message string to show in the toast.</param>
-    private void _ShowAndroidToastMessage(string message)
-    {
-        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject unityActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+    #region BOOL-CHECKS
 
-        if (unityActivity != null)
+    private bool IsUIInput()
+    {
+        if (EventSystem.current.currentSelectedGameObject != null)
         {
-            AndroidJavaClass toastClass = new AndroidJavaClass("android.widget.Toast");
-            unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
+            if (Input.touchCount == 0)
             {
-                AndroidJavaObject toastObject = toastClass.CallStatic<AndroidJavaObject>("makeText", unityActivity,
-                    message, 0);
-                toastObject.Call("show");
-            }));
+                EventSystem.current.SetSelectedGameObject(null);
+                return false;
+            }
+            return true;
         }
+        return false;
     }
 
-
-
-    public void BackToMainMenu()
+    private bool IsPlacingAllowed()
     {
-        SceneManager.LoadScene("Menu");
+        return ((grabbedObject != null) && (Globals.IsHigherThanTop(grabbedObject.transform.position.y)));
     }
 
-    public void OneMoreTime()
-    {
-        SceneManager.LoadScene("SinglePlayScene");
-    }
+    #endregion
 
-    public void GameOver()
+    #region AWAKE- AND UNLOADHELPERS
+
+    private void DestroyImagicial()
     {
-        if (yourTurn)
+        if (ghostStone != null)
         {
-            debugText.text = "GAME-OVER \n You loose";
-            yourTurn = false;
-            gameOverMenu.gameObject.SetActive(true);
-        }
-
-    }
-
-    public void Freeze()
-    {
-        if (imaginationalStone == null) return;
-
-        if (imaginationalStone.transform.parent == ground.transform)
-        {
-            imaginationalStone.transform.parent = FirstPersonCamera.transform;
-            debugText.text = "M O V E !";
-            freeze = false;
-        }
-
-        else
-        {
-            imaginationalStone.transform.parent = ground.transform;
-            debugText.text = "F R E E Z E !";
-            freeze = true;
+            Destroy(ghostStone);
+            ghostStone = null;
         }
     }
+
+    #endregion
 }
 

@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Menu : MonoBehaviour 
+public class Menu : SceneController
 {
-	public void StartNewGame()
-	{
-		SceneManager.LoadScene(1);
-	}
-
 	public void QuitGame()
 	{
 		Application.Quit ();
 		Debug.Log ("Quit");
 	}
 
+    public override void OnUnLoad()
+    {
+
+    }
+
+    public override void CustomAwake()
+    {
+
+    }
 }

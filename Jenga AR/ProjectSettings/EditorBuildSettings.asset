@@ -8,9 +8,9 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/JengaArProofed/Scenes/ArCoreScene.unity
+    guid: 8c6d80860a75cd44292f1af51880758c
   - enabled: 1
     path: Assets/JengaArProofed/Scenes/Menu.unity
     guid: 7261dce4575cd0e428ebf575f75c1409

@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b741f21359d96c4e836dccaf7137c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  podest: {fileID: 4205392573883706, guid: 8952ba2f603165b469680e8c747b709e, type: 2}
   towerGround: {fileID: 4453100922609626, guid: 42ac9a3015400104989275f035e40ee7,
     type: 2}
   smallStone: {fileID: 4735672868992842, guid: c68fec053922a8d4e963b2c684fb34b3, type: 2}

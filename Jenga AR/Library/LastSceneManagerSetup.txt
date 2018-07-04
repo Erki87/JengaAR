@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/JengaArProofed/Scenes/SinglePlayScene.unity
+- path: Assets/JengaArProofed/Scenes/ArCoreScene.unity
   isLoaded: 1
   isActive: 1

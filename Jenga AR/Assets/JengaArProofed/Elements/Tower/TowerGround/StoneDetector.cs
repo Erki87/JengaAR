@@ -18,7 +18,7 @@ public class StoneDetector : MonoBehaviour {
     {
         if (other.name.Contains("Stone"))
         {
-            FindObjectOfType<SinglePlayController>().GameOver();
+            FindObjectOfType<SinglePlayController>().UpdateStatus(GameStatus.GAME_OVER_LOOSE);
         }
     }
 }

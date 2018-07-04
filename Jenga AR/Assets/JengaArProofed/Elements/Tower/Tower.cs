@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Tower : MonoBehaviour {
 
+    public Transform podest;
     public Transform towerGround;
     public Transform smallStone;
     public Transform mediumStone;
@@ -15,6 +16,7 @@ public class Tower : MonoBehaviour {
     public Vector3 currentHeight;
     public int layers;
 
+
 	// Use this for initialization
 	void Start() {
         StartCoroutine(CreateTower());
@@ -24,8 +26,9 @@ public class Tower : MonoBehaviour {
     {
         int currentLayers = 0;
         bool frontalLayer = true;
-        transform.position += Vector3.up * 0.15f;
+
         placePosition = transform.position;
+        PlacePodest();
         PlaceGround();
 
         while (currentLayers < this.layers)
@@ -39,6 +42,14 @@ public class Tower : MonoBehaviour {
             frontalLayer = !frontalLayer;
 
         }
+        Globals.Service().heightToTop = currentHeight.y;
+    }
+
+    private void PlacePodest()
+    {
+        Vector3 position = placePosition + Vector3.up * podest.lossyScale.y * 0.5f;
+        Instantiate(podest, position, transform.rotation);
+        placePosition += Vector3.up * podest.lossyScale.y;
     }
 
     private void CreateQuerLayer()
@@ -88,10 +99,9 @@ public class Tower : MonoBehaviour {
 
     private void PlaceGround()
     {
-        Debug.Log(towerGround.lossyScale.y * 0.5f);
-        Vector3 position = new Vector3(placePosition.x, placePosition.y + towerGround.lossyScale.y*0.5f, placePosition.z);
-        Instantiate(towerGround, position, Quaternion.Euler(placeRotation));
-        currentHeight = new Vector3(placePosition.x, placePosition.y + towerGround.lossyScale.y, placePosition.z);
+        placePosition += Vector3.up * towerGround.lossyScale.y*0.5f;
+        Instantiate(towerGround, placePosition, Quaternion.Euler(placeRotation));
+        currentHeight = new Vector3(placePosition.x, placePosition.y + towerGround.lossyScale.y*0.5f, placePosition.z);
     }
 
     // Update is called once per frame

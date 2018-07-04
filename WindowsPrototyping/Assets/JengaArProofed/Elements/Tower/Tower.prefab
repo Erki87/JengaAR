@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1899995727548690}
+  m_IsPrefabParent: 1
+--- !u!1 &1899995727548690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4011867710071886}
+  - component: {fileID: 114445194564627536}
+  m_Layer: 0
+  m_Name: Tower
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4011867710071886
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1899995727548690}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114445194564627536
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1899995727548690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b741f21359d96c4e836dccaf7137c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  towerGround: {fileID: 4453100922609626, guid: 42ac9a3015400104989275f035e40ee7,
+    type: 2}
+  smallStone: {fileID: 4735672868992842, guid: c68fec053922a8d4e963b2c684fb34b3, type: 2}
+  mediumStone: {fileID: 4977942026237704, guid: 7f42da8a84631be448d0f7a333b8c1a5,
+    type: 2}
+  bigStone: {fileID: 4804377077520388, guid: 61f40e4d4686851468a70a516845fa4c, type: 2}
+  placePosition: {x: 0, y: 0, z: 0}
+  placeRotation: {x: 0, y: 0, z: 0}
+  currentHeight: {x: 0, y: 0, z: 0}
+  layers: 20

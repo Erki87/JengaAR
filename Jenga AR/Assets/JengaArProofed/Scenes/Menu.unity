@@ -358,6 +358,26 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114274304753879176, guid: a3bfdddc8e5f35c43a6a43bf9058c8b2,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 114274304753879176, guid: a3bfdddc8e5f35c43a6a43bf9058c8b2,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114274304753879176, guid: a3bfdddc8e5f35c43a6a43bf9058c8b2,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114934892804883844, guid: a3bfdddc8e5f35c43a6a43bf9058c8b2,
+        type: 2}
+      propertyPath: sceneId
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a3bfdddc8e5f35c43a6a43bf9058c8b2, type: 2}
   m_IsPrefabParent: 0

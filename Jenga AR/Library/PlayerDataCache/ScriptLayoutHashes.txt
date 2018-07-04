@@ -1,7 +1,8 @@
 Android
 PlayerPath?
-C:/Users/Miles/Workspace/AR/JengaGit/JengaAR/Jenga AR/test3.apk
+C:/Users/Miles/Workspace/AR/JengaGit/JengaAR/Jenga AR/test6.apk
 SceneListBegin?
+Assets/JengaArProofed/Scenes/ArCoreScene.unity
 Assets/JengaArProofed/Scenes/Menu.unity
 Assets/JengaArProofed/Scenes/SinglePlayScene.unity
 SceneListEnd?
@@ -19,9 +20,10 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 607d64d2c4bc76ac9876e6f7b9cc7edf UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:GoogleARCore.CrossPlatform.XPAnchor
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:GoogleARCore.Anchor
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Menu
-be3eb50ea17441d681601ae101e51062 Assembly-CSharp.dll:.Tower
-4ece81221cf7c6bc948926698a9d4005 Assembly-CSharp.dll:.SinglePlayController
+6b328e2aae3d3304d45825d615da4af7 Assembly-CSharp.dll:.Menu
+78192c6cad016e61ce817ce363da078e Assembly-CSharp.dll:.Tower
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.TippsScript
+1be0126e0859713b3c7c22decdacd39e Assembly-CSharp.dll:.SinglePlayController
 02f43a4f72590a32c46e9c76cd877fe1 Assembly-CSharp.dll:GoogleARCore.Examples.AugmentedImage.AugmentedImageExampleController
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
@@ -90,6 +92,7 @@ c63db43c730fa2cbb8ca07de15898cb6 UnityEngine.UI.dll:UnityEngine.UI.Toggle
 f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 86d36c43c53541d667100dc90b89cfba UnityEngine.UI.dll:UnityEngine.EventSystems.TouchInputModule
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ARSurface
 56ce15dd7401a24d085fbe0967ae56c6 Assembly-CSharp.dll:GoogleARCore.Examples.ComputerVision.TextureReader
 b203c0a7615dfebdf3d7d05b7551f462 Assembly-CSharp.dll:GoogleARCore.Examples.CloudAnchor.CloudAnchorController
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
@@ -120,7 +123,11 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 73843688b51256aed059f049c540bca8 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
+8efbe631b2d68de2644e6d8187adac54 Assembly-CSharp.dll:.EverController
+79646fcbdb3b851cce17adc49bc73a4b Assembly-CSharp.dll:.ARSurfaceManager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:GoogleARCore.EnvironmentalLight
+ed3cb9c2d3dab02aa8724a5d22297d20 Assembly-CSharp.dll:.DeviceController
+b0dc6d74dbc6d5e25ffc27ae659764fa Assembly-CSharp.dll:.Globals
 322cb40e1e282f28af980cbef7922a90 UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsEventTracker
 dc07d7ad69b399a46e92c483bf1c04ca UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
@@ -129,7 +136,7 @@ bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.Audi
 c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingCollider
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 4c0da986045987a576f33898ee525871 Assembly-CSharp.dll:GoogleARCore.Examples.HelloAR.HelloARController
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stone
+91953d212624264f04f97a30e83948d3 Assembly-CSharp.dll:.Stone
 4294352ce43e027e71b199587be57c74 Assembly-CSharp.dll:GoogleARCore.Examples.AugmentedImage.AugmentedImageVisualizer
 bc79872c81f3cda9be1ec427f70f92aa Vuforia.UnityExtensions.dll:Vuforia.AnchorBehaviour
 0561521e336e270e6e5a9c61387cb838 Vuforia.UnityExtensions.dll:Vuforia.AnchorInputListenerBehaviour
@@ -237,6 +244,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 85241c88cd02e2068b27e37f90dfe18c Assembly-CSharp.dll:GoogleARCore.Examples.Common.DetectedPlaneGenerator
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:GoogleARCore.Examples.Common.DetectedPlaneVisualizer
+7e98576eebcae017b64ff45ff072fd1e Assembly-CSharp.dll:.ArCoreDevice
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.StoneDetector
 bc79872c81f3cda9be1ec427f70f92aa Vuforia.UnityExtensions.dll:Vuforia.AnchorBehaviour
 0561521e336e270e6e5a9c61387cb838 Vuforia.UnityExtensions.dll:Vuforia.AnchorInputListenerBehaviour
@@ -304,4 +312,4 @@ a924c90a95cf65003f662aa5e30abb6b Vuforia.UnityExtensions.dll:Vuforia.VuforiaConf
 01e6f145049f3a676df6dc247eabf176 Vuforia.UnityExtensions.dll:Vuforia.VuMarkBehaviour
 3d1b89310e77c34bc0c8d7132231345c Vuforia.UnityExtensions.dll:Vuforia.WireframeBehaviour
 05524b8f659e7bfe5756d1335fec24ba Vuforia.UnityExtensions.dll:Vuforia.WireframeTrackableEventHandler
-2aa73e17576a4e4d3c6190b00ede5e13 Assembly-CSharp.dll:.SideCam
+b142028c1289747e841f7fd2f86224d7 Assembly-CSharp.dll:.SinglePlayMenu
